@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ViveLink | Red social nacional</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <link rel="stylesheet" href="styles.css?v=2" />
+  </head>
+  <body>
+    <div class="language-switcher">
+      <label for="languageSelect" data-i18n="languageLabel">Idioma</label>
+      <select id="languageSelect" aria-label="Idioma" data-i18n-aria-label="languageLabel">
+        <option value="es">Español (Castellano)</option>
+        <option value="en">English</option>
+        <option value="zh">中文（普通话）</option>
+      </select>
+      <button id="readingModeToggle" class="reading-toggle" type="button" aria-pressed="false">Activar lectura</button>
+    </div>
+    <div id="authScreen" class="auth-screen">
+      <div class="auth-card">
+        <div class="brand-mark auth-brand">V</div>
+        <h2 id="authTitle" data-i18n="loginTitle">Inicia sesión</h2>
+        <p id="authSubtitle" data-i18n="loginSubtitle">Accede a tu perfil de ViveLink</p>
+        <form id="authForm" class="auth-form">
+          <label id="authNameWrap" class="auth-field hidden">
+            <span data-i18n="name">Nombre</span>
+            <input id="authName" type="text" data-i18n-placeholder="yourName" placeholder="Tu nombre" />
+          </label>
+          <label class="auth-field">
+            <span data-i18n="email">Email</span>
+            <input id="authEmail" type="email" data-i18n-placeholder="emailPlaceholder" placeholder="tu@email.com" required />
+          </label>
+          <label class="auth-field">
+            <span data-i18n="password">Contraseña</span>
+            <input id="authPassword" type="password" data-i18n-placeholder="passwordPlaceholder" placeholder="••••••••" required />
+          </label>
+          <button id="authSubmit" class="primary-btn auth-submit" type="submit" data-i18n="login">Entrar</button>
+        </form>
+        <button id="authSwitch" class="ghost-btn auth-switch" type="button" data-i18n="createAccount">Crear cuenta</button>
+        <p id="authMessage" class="auth-message" aria-live="polite"></p>
+      </div>
+    </div>
+
+    <div id="appShell" class="app-shell hidden">
+      <aside class="sidebar">
+        <div class="brand-block">
+          <div class="brand-mark">V</div>
+          <div>
+            <p class="brand-label">ViveLink</p>
+              <span data-i18n="social">Social</span>
+          </div>
+        </div>
+
+        <nav class="nav">
+          <button class="nav-item active" data-nav-target="feed"><span>🏠</span> <span data-i18n="home">Inicio</span></button>
+          <button class="nav-item" data-nav-target="profiles"><span>🔎</span> <span data-i18n="discover">Descubrir</span></button>
+          <button class="nav-item" data-nav-target="matches"><span>💞</span> <span data-i18n="matches">Matches</span></button>
+          <button class="nav-item" data-nav-target="chatList"><span>💬</span> <span data-i18n="messages">Mensajes</span></button>
+          <button class="nav-item" data-nav-target="stats-panel"><span>📈</span> <span data-i18n="metrics">Métricas</span></button>
+          <button class="nav-item hidden" data-nav-target="admin-panel"><span>🔐</span> <span data-i18n="adminNav">Administración</span></button>
+        </nav>
+
+        <div id="stats-panel" class="panel small-panel">
+          <div class="panel-header">
+            <p data-i18n="networkSize">Dimensionado</p>
+            <span data-i18n="spain">España</span>
+          </div>
+          <ul id="networkStats" class="stat-list"></ul>
+        </div>
+      </aside>
+
+      <main class="main-panel">
+        <header class="topbar">
+          <label class="search-box" aria-label="Buscar usuarios" data-i18n-aria-label="searchUsers">
+            <span>⌕</span>
+            <input id="searchInput" type="text" data-i18n-placeholder="searchPlaceholder" placeholder="Buscar por nombre, ciudad o interés" />
+          </label>
+          <div class="top-actions">
+            <button id="topPublishBtn" class="secondary-btn" type="button" data-i18n="publishTop">+ Publicar</button>
+            <button id="logoutBtn" class="ghost-btn logout-btn" type="button" data-i18n="logout">Cerrar sesión</button>
+            <div class="avatar-mini" aria-label="Perfil" data-i18n-aria-label="profile"></div>
+          </div>
+        </header>
+
+        <section id="admin-panel" class="panel admin-panel hidden" aria-labelledby="adminTitle">
+          <div class="panel-header admin-panel-header">
+            <div>
+              <h2 id="adminTitle" data-i18n="adminTitle">Administración de usuarios</h2>
+              <p data-i18n="adminDescription">Solo el administrador puede consultar y crear cuentas.</p>
+            </div>
+          </div>
+          <form id="adminUserForm" class="admin-user-form">
+            <label class="auth-field">
+              <span data-i18n="name">Nombre</span>
+              <input id="adminUserName" type="text" maxlength="80" required />
+            </label>
+            <label class="auth-field">
+              <span data-i18n="email">Email</span>
+              <input id="adminUserEmail" type="email" maxlength="254" required />
+            </label>
+            <label class="auth-field">
+              <span data-i18n="password">Contraseña</span>
+              <input id="adminUserPassword" type="password" minlength="8" maxlength="200" autocomplete="new-password" required />
+            </label>
+            <label class="auth-field">
+              <span data-i18n="city">Ciudad</span>
+              <input id="adminUserCity" type="text" maxlength="100" value="Madrid" required />
+            </label>
+            <label class="auth-field">
+              <span data-i18n="age">Edad</span>
+              <input id="adminUserAge" type="number" min="17" max="100" value="25" required />
+            </label>
+            <button id="adminCreateUserBtn" class="primary-btn" type="submit" data-i18n="createUser">Crear usuario</button>
+          </form>
+          <p id="adminMessage" class="admin-message" role="status" aria-live="polite"></p>
+          <div class="admin-table-wrap">
+            <table class="admin-users-table">
+              <thead>
+                <tr>
+                  <th data-i18n="userId">ID</th>
+                  <th data-i18n="name">Nombre</th>
+                  <th data-i18n="email">Email</th>
+                  <th data-i18n="city">Ciudad</th>
+                  <th data-i18n="age">Edad</th>
+                  <th data-i18n="role">Rol</th>
+                </tr>
+              </thead>
+              <tbody id="adminUsersBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow" data-i18n="eyebrow">Conecta con personas reales</p>
+            <h1 data-i18n="heroTitle">Encuentra coincidencias cerca de ti</h1>
+            <p class="hero-text" data-i18n="heroText">
+              Una red social nacional pensada para usuarios de 17 a 30 años con perfiles,
+              likes, emparejamientos y chat en tiempo real.
+            </p>
+            <div class="cta-row">
+              <button id="discoverProfilesBtn" class="primary-btn" type="button" data-i18n="discoverProfiles">Descubrir perfiles</button>
+              <button id="communityBtn" class="ghost-btn" type="button" data-i18n="viewCommunity">Ver comunidad</button>
+            </div>
+          </div>
+
+          <div class="hero-panel">
+            <div class="metric-card">
+              <span class="metric-label">MAU</span>
+              <strong>2,28M</strong>
+            </div>
+            <div class="metric-card">
+              <span class="metric-label">DAU</span>
+              <strong>912k</strong>
+            </div>
+            <div class="metric-card">
+              <span class="metric-label" data-i18n="peak">Pico</span>
+              <strong>79.854</strong>
+            </div>
+          </div>
+        </section>
+
+        <div class="content-grid">
+          <section class="feed-column">
+            <div class="composer panel">
+              <div class="composer-header">
+                <div class="avatar large"></div>
+                <div>
+                  <h3 data-i18n="composerTitle">¿Qué te gustaría compartir hoy?</h3>
+                </div>
+              </div>
+              <textarea id="postInput" rows="3" data-i18n-placeholder="postPlaceholder" placeholder="Cuenta algo sobre tu día, un plan, o un descubrimiento..."></textarea>
+              <label class="youtube-url-field">
+                <span data-i18n="youtubeUrlLabel">Enlace de YouTube (opcional)</span>
+                <input id="videoUrlInput" type="url" maxlength="2000" data-i18n-placeholder="youtubeUrlPlaceholder" placeholder="https://www.youtube.com/watch?v=..." />
+              </label>
+              <div class="composer-actions">
+                <div class="quick-actions">
+                  <span data-i18n="photo">📷 Foto</span>
+                  <span data-i18n="location">📍 Ubicación</span>
+                  <span data-i18n="status">😊 Estado</span>
+                </div>
+                <button id="publishBtn" class="primary-btn small" data-i18n="publish">Publicar</button>
+              </div>
+            </div>
+
+            <div id="feed" class="feed"></div>
+          </section>
+
+          <aside class="side-column">
+            <div id="profiles" class="panel">
+              <div class="panel-header">
+                <h3 data-i18n="nearbyProfiles">Perfiles cercanos</h3>
+                <button id="showAllProfiles" class="link-btn" type="button" data-i18n="seeAll">Ver todo</button>
+              </div>
+              <div id="profilesList" class="profile-list"></div>
+            </div>
+
+            <div id="matches" class="panel">
+              <div class="panel-header">
+                <h3 data-i18n="matches">Matches</h3>
+                <button id="refreshMatchesBtn" class="link-btn" type="button" data-i18n="refresh">Actualizar</button>
+              </div>
+              <div id="matchesList" class="match-list"></div>
+            </div>
+
+            <div id="chatListPanel" class="panel">
+              <div class="panel-header">
+                <h3 data-i18n="messages">Mensajes</h3>
+                <button id="newMessageBtn" class="link-btn" type="button" data-i18n="new">Nuevo</button>
+              </div>
+              <div id="chatList" class="chat-list"></div>
+            </div>
+          </aside>
+        </div>
+      </main>
+    </div>
+
+    </div>
+    <script src="script.js?v=2"></script>
+  </body>
+</html>
