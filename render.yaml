@@ -9,6 +9,8 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: ADMIN_ONLY
+        value: "true"
       - key: DATABASE_URL
         sync: false
       - key: ADMIN_EMAIL

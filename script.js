@@ -18,13 +18,15 @@ const state = {
   chats: [],
   adminUsers: [],
   searchQuery: '',
-  isRegisterMode: false
+  isRegisterMode: false,
+  adminOnly: true
 };
 
 const translations = {
   es: {
     languageLabel: 'Idioma', readingModeOn: 'Activar lectura', readingModeOff: 'Desactivar lectura',
     readingUnavailable: 'Lectura no disponible', loginTitle: 'Inicia sesión', loginSubtitle: 'Accede a tu perfil de ViveLink',
+    authConfigUnavailable: 'No se pudo conectar con el servidor de acceso. Inténtalo más tarde.',
     name: 'Nombre', yourName: 'Tu nombre', email: 'Email', emailPlaceholder: 'tu@email.com',
     password: 'Contraseña', passwordPlaceholder: '••••••••', login: 'Entrar', createAccount: 'Crear cuenta',
     registerTitle: 'Crea tu cuenta', registerSubtitle: 'Únete a la comunidad de ViveLink', alreadyAccount: 'Ya tengo cuenta',
@@ -41,7 +43,7 @@ const translations = {
     comment: '💬 Comentar', share: '🔁 Compartir', peakStats: 'Picos', apiRate: 'API/s',
     bandwidth: 'Ancho de banda', servers: 'Servidores', siteTitle: 'ViveLink | Red social nacional',
     adminNav: 'Administración', adminTitle: 'Administración de usuarios',
-    adminDescription: 'Solo el administrador puede consultar y crear cuentas.',
+    adminDescription: 'Solo el administrador puede consultar las cuentas.',
     logout: 'Cerrar sesión', city: 'Ciudad', age: 'Edad', createUser: 'Crear usuario',
     userId: 'ID', role: 'Rol', administrator: 'Administrador', standardUser: 'Usuario',
     userCreated: 'Usuario creado correctamente.', adminLoadError: 'No se pudieron cargar los usuarios.',
@@ -52,6 +54,7 @@ const translations = {
   en: {
     languageLabel: 'Language', readingModeOn: 'Enable reading', readingModeOff: 'Disable reading',
     readingUnavailable: 'Reading unavailable', loginTitle: 'Log in', loginSubtitle: 'Access your ViveLink profile',
+    authConfigUnavailable: 'Could not connect to the sign-in server. Try again later.',
     name: 'Name', yourName: 'Your name', email: 'Email', emailPlaceholder: 'you@email.com',
     password: 'Password', passwordPlaceholder: '••••••••', login: 'Log in', createAccount: 'Create account',
     registerTitle: 'Create your account', registerSubtitle: 'Join the ViveLink community', alreadyAccount: 'I already have an account',
@@ -68,7 +71,7 @@ const translations = {
     comment: '💬 Comment', share: '🔁 Share', peakStats: 'Peaks', apiRate: 'API/s',
     bandwidth: 'Bandwidth', servers: 'Servers', siteTitle: 'ViveLink | National social network',
     adminNav: 'Admin', adminTitle: 'User administration',
-    adminDescription: 'Only the administrator can view and create accounts.',
+    adminDescription: 'Only the administrator can view accounts.',
     logout: 'Log out', city: 'City', age: 'Age', createUser: 'Create user',
     userId: 'ID', role: 'Role', administrator: 'Administrator', standardUser: 'User',
     userCreated: 'User created successfully.', adminLoadError: 'Could not load users.',
@@ -79,6 +82,7 @@ const translations = {
   zh: {
     languageLabel: '语言', readingModeOn: '开启朗读', readingModeOff: '关闭朗读',
     readingUnavailable: '朗读不可用', loginTitle: '登录', loginSubtitle: '访问你的 ViveLink 个人资料',
+    authConfigUnavailable: '无法连接登录服务器，请稍后重试。',
     name: '姓名', yourName: '你的姓名', email: '电子邮箱', emailPlaceholder: 'you@email.com',
     password: '密码', passwordPlaceholder: '••••••••', login: '登录', createAccount: '创建账户',
     registerTitle: '创建账户', registerSubtitle: '加入 ViveLink 社区', alreadyAccount: '我已有账户',
@@ -95,7 +99,7 @@ const translations = {
     comment: '💬 评论', share: '🔁 分享', peakStats: '峰值', apiRate: 'API/秒',
     bandwidth: '带宽', servers: '服务器', siteTitle: 'ViveLink | 全国社交网络',
     adminNav: '管理', adminTitle: '用户管理',
-    adminDescription: '只有管理员可以查看和创建账户。',
+    adminDescription: '只有管理员可以查看账户。',
     logout: '退出登录', city: '城市', age: '年龄', createUser: '创建用户',
     userId: '编号', role: '角色', administrator: '管理员', standardUser: '用户',
     userCreated: '用户创建成功。', adminLoadError: '无法加载用户。',
@@ -387,7 +391,7 @@ const showAuthScreen = (visible) => {
 };
 
 const setAuthMode = (isRegister) => {
-  state.isRegisterMode = isRegister;
+  state.isRegisterMode = Boolean(isRegister && !state.adminOnly);
   const title = document.getElementById('authTitle');
   const subtitle = document.getElementById('authSubtitle');
   const submitButton = document.getElementById('authSubmit');
@@ -395,13 +399,34 @@ const setAuthMode = (isRegister) => {
   const nameWrap = document.getElementById('authNameWrap');
   const nameInput = document.getElementById('authName');
 
-  if (title) title.textContent = translate(isRegister ? 'registerTitle' : 'loginTitle');
-  if (subtitle) subtitle.textContent = translate(isRegister ? 'registerSubtitle' : 'loginSubtitle');
-  if (submitButton) submitButton.textContent = translate(isRegister ? 'createAccount' : 'login');
-  if (switchButton) switchButton.textContent = translate(isRegister ? 'alreadyAccount' : 'createAccount');
-  if (nameWrap) nameWrap.classList.toggle('hidden', !isRegister);
-  if (nameInput) nameInput.required = isRegister;
+  if (title) title.textContent = translate(state.isRegisterMode ? 'registerTitle' : 'loginTitle');
+  if (subtitle) subtitle.textContent = translate(state.isRegisterMode ? 'registerSubtitle' : 'loginSubtitle');
+  if (submitButton) submitButton.textContent = translate(state.isRegisterMode ? 'createAccount' : 'login');
+  if (switchButton) {
+    switchButton.textContent = translate(state.isRegisterMode ? 'alreadyAccount' : 'createAccount');
+    switchButton.classList.toggle('hidden', state.adminOnly);
+  }
+  if (nameWrap) nameWrap.classList.toggle('hidden', !state.isRegisterMode);
+  if (nameInput) nameInput.required = state.isRegisterMode;
+  const adminUserForm = document.getElementById('adminUserForm');
+  if (adminUserForm) adminUserForm.classList.toggle('hidden', state.adminOnly);
   document.getElementById('authMessage').textContent = '';
+};
+
+const loadAuthConfig = async () => {
+  let configUnavailable = false;
+  try {
+    const config = await apiFetch('/api/config');
+    state.adminOnly = Boolean(config.adminOnly);
+  } catch (_error) {
+    state.adminOnly = true;
+    configUnavailable = true;
+  }
+
+  setAuthMode(false);
+  if (configUnavailable) {
+    document.getElementById('authMessage').textContent = translate('authConfigUnavailable');
+  }
 };
 
 const handleAuthSubmit = async (event) => {
@@ -489,7 +514,7 @@ const loadAppData = async () => {
 };
 
 const boot = async () => {
-  setAuthMode(false);
+  await loadAuthConfig();
   if (!state.token) {
     showAuthScreen(true);
     return;

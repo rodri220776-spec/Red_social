@@ -9,6 +9,7 @@ const port = process.env.PORT || 3000;
 const dbPath = process.env.SQLITE_PATH || path.join(__dirname, 'database.sqlite');
 const db = createDatabase(dbPath);
 const sessions = new Map();
+const adminOnly = process.env.NODE_ENV === 'production' || process.env.ADMIN_ONLY === 'true';
 
 const ensureDir = () => {
   const dir = path.dirname(dbPath);
@@ -148,12 +149,20 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
+app.get('/api/config', (req, res) => {
+  res.json({ adminOnly });
+});
+
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 app.get('/index.html', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 app.get('/styles.css', (req, res) => res.sendFile(path.join(__dirname, 'styles.css')));
 app.get('/script.js', (req, res) => res.sendFile(path.join(__dirname, 'script.js')));
 
 app.post('/api/register', (req, res) => {
+  if (adminOnly) {
+    return res.status(403).json({ error: 'El registro público está desactivado.' });
+  }
+
   const { name, email, password, city = 'Madrid', age = 25 } = req.body || {};
   const cleanEmail = String(email || '').trim().toLowerCase();
   const cleanName = String(name || '').trim();
@@ -202,7 +211,9 @@ app.post('/api/login', (req, res) => {
 
   db.get('SELECT * FROM users WHERE email = ?', [String(email).trim().toLowerCase()], (err, user) => {
     if (err) return res.status(500).json({ error: 'Error de base de datos' });
-    if (!user) return res.status(401).json({ error: 'Credenciales inválidas' });
+    if (!user || (adminOnly && !Number(user.is_admin))) {
+      return res.status(401).json({ error: 'Credenciales inválidas' });
+    }
 
     if (!verifyPassword(String(password), user.password)) {
       return res.status(401).json({ error: 'Credenciales inválidas' });
@@ -232,6 +243,10 @@ app.get('/api/admin/users', requireAuth, requireAdmin, (req, res) => {
 });
 
 app.post('/api/admin/users', requireAuth, requireAdmin, (req, res) => {
+  if (adminOnly) {
+    return res.status(403).json({ error: 'La creación de cuentas está desactivada.' });
+  }
+
   const { name, email, password, city = 'Madrid', age = 25 } = req.body || {};
   const cleanName = String(name || '').trim();
   const cleanEmail = String(email || '').trim().toLowerCase();

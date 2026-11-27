@@ -29,7 +29,13 @@ Para comprobar la inicialización de la base de datos, ejecuta `npm test`.
    - `ADMIN_PASSWORD`: contraseña privada de al menos 12 caracteres. No la publiques ni la envíes por el chat.
 5. Espera al despliegue. Render te dará una URL `https://...onrender.com`; ese es el enlace público de la web. El enlace del repositorio de GitHub no ejecuta la aplicación.
 
-El servidor crea las tablas y la cuenta de administrador al arrancar. En producción no carga los perfiles de demostración. La base de datos no se expone como archivo ni se entrega a cuentas normales. Solo el administrador puede consultar la lista completa de usuarios y crear cuentas desde **Administración**. El registro público también permanece disponible.
+El servidor crea las tablas y la cuenta de administrador al arrancar. En producción no carga los perfiles de demostración y solo permite iniciar sesión con la cuenta administradora configurada. El registro público y la creación de cuentas desde **Administración** están desactivados en producción. La base de datos no se expone como archivo ni se entrega a cuentas normales. Para entrar, usa el correo definido en `ADMIN_EMAIL` y una contraseña fuerte de al menos 12 caracteres en `ADMIN_PASSWORD`; no compartas esos secretos.
+
+### Si publicas la interfaz en Netlify
+
+Netlify solo sirve los archivos de la interfaz; el inicio de sesión requiere también el servidor Express de Render y la base de datos PostgreSQL. Este proyecto configura Netlify para reenviar `/api/*` a `https://vivelink.onrender.com`. Despliega primero el servicio de Render definido en `render.yaml` y configura sus variables de producción. Si Render muestra un dominio distinto, actualiza el destino `to` en `netlify.toml` con la URL asignada por Render y vuelve a desplegar Netlify. El enlace de Netlify es el que compartes con los usuarios; no uses ese mismo enlace como URL del servidor.
+
+Para una configuración gratuita, usa Neon para PostgreSQL y el plan gratuito de Render para el servidor. Render puede detener el servidor tras 15 minutos sin tráfico; la primera petición posterior puede tardar alrededor de un minuto mientras se reactiva. La base de datos gratuita de Render caduca a los 30 días, por eso estas instrucciones usan Neon en su lugar. El plan gratuito sirve para pruebas, pero no garantiza disponibilidad inmediata permanente.
 
 Los usuarios autenticados pueden ver los perfiles públicos y publicaciones propios de la red social, pero no pueden consultar contraseñas ni correos de otras cuentas. Las contraseñas se guardan como hashes.
 
