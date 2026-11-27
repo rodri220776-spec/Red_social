@@ -10,7 +10,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-    <link rel="stylesheet" href="styles.css?v=2" />
+    <link rel="stylesheet" href="styles.css?v=3" />
   </head>
   <body>
     <div class="language-switcher">
@@ -22,9 +22,23 @@
       </select>
       <button id="readingModeToggle" class="reading-toggle" type="button" aria-pressed="false">Activar lectura</button>
     </div>
-    <div id="authScreen" class="auth-screen">
-      <div class="auth-card">
-        <div class="brand-mark auth-brand">V</div>
+    <main id="authScreen" class="auth-landing">
+      <section class="auth-intro">
+        <div class="auth-landing-brand">
+          <div class="brand-mark">V</div>
+          <div>
+            <p class="brand-label">ViveLink</p>
+            <span data-i18n="social">Social</span>
+          </div>
+        </div>
+        <p class="eyebrow" data-i18n="eyebrow">Conecta con personas reales</p>
+        <h1 data-i18n="heroTitle">Encuentra coincidencias cerca de ti</h1>
+        <p class="hero-text" data-i18n="heroText">
+          Una red social nacional pensada para usuarios de 17 a 30 años con perfiles,
+          likes, emparejamientos y chat en tiempo real.
+        </p>
+      </section>
+      <section class="auth-card" aria-labelledby="authTitle">
         <h2 id="authTitle" data-i18n="loginTitle">Inicia sesión</h2>
         <p id="authSubtitle" data-i18n="loginSubtitle">Accede a tu perfil de ViveLink</p>
         <form id="authForm" class="auth-form">
@@ -44,8 +58,8 @@
         </form>
         <button id="authSwitch" class="ghost-btn auth-switch" type="button" data-i18n="createAccount">Crear cuenta</button>
         <p id="authMessage" class="auth-message" aria-live="polite"></p>
-      </div>
-    </div>
+      </section>
+    </main>
 
     <div id="appShell" class="app-shell hidden">
       <aside class="sidebar">
